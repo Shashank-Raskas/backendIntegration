@@ -1,11 +1,14 @@
 import { useState,useEffect } from 'react';
 import Places from './Places.jsx';
+import ErrorPage from './Error.jsx';
 
 const places = localStorage.getItem('places');
 export default function AvailablePlaces({ onSelectPlace }) {
 
 const [isLoading, setIsLoading] = useState(true); //? to show loading text
 const [availablePlaces, setAvailablePlaces] = useState([]); ///initial empty array cuz fetch takes time to load
+const [error, setError] = useState(null); //? to show error text
+
 
   // fetch('http://localhost:3000/places').then((response) => {  //!it creates infinite loop as state updating retriggers a rerender
   //   return response.json()                                   //? use a useEffect to handle http requests
@@ -26,15 +29,32 @@ const [availablePlaces, setAvailablePlaces] = useState([]); ///initial empty arr
   useEffect(() => {
     async function fetchPlaces() {
       setIsLoading(true); //! set loading to true before fetching data
-      const response = await fetch('http://localhost:3000/places');
-      const resData = await response.json();
-      setAvailablePlaces(resData.places);
+      try{
+        const response = await fetch('http://localhost:3000/places');
+        const resData = await response.json();
+  
+        if (!response.ok) {
+          //const error = new Error(resData.message || 'Could not fetch places.');
+          throw new Error('Failed to fetch places.');
+        }
+        setAvailablePlaces(resData.places);
+      } catch(error){
+        setError({
+          message: error.message || 'Could not fetch places please try again later.'  
+        });
+      }
+        
+
       setIsLoading(false); //! set loading to false after data is fetched
     }
 
     fetchPlaces(); //? call the function to fetch data
   }, []); //? empty array as second argument to run only once when the component mounts
 
+  if (error) {
+        return <ErrorPage title="An error occurred" message={error.message } />; //! error handling
+  }
+  
   return (
     <Places
       title="Available Places"

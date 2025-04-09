@@ -2,6 +2,7 @@ import { useState,useEffect } from 'react';
 import Places from './Places.jsx';
 import ErrorPage from './Error.jsx';
 import { sortPlacesByDistance } from '../loc.js';
+import { fetchAvailablePlaces } from '../http.js';
 
 const places = localStorage.getItem('places');
 export default function AvailablePlaces({ onSelectPlace }) {
@@ -31,16 +32,10 @@ const [error, setError] = useState(null); //? to show error text
     async function fetchPlaces() {
       setIsLoading(true); //! set loading to true before fetching data
       try{
-        const response = await fetch('http://localhost:3000/places');
-        const resData = await response.json();
-  
-        if (!response.ok) {
-          //const error = new Error(resData.message || 'Could not fetch places.');
-          throw new Error('Failed to fetch places.');
-        }
+        const places = await fetchAvailablePlaces();
 
         navigator.geolocation.getCurrentPosition((position) => {
-          const sortedPlaces = sortPlacesByDistance(resData.places, position.coords.latitude, position.coords.longitude);
+          const sortedPlaces = sortPlacesByDistance(places, position.coords.latitude, position.coords.longitude);
           setAvailablePlaces(sortedPlaces);
           setIsLoading(false); //! set loading to false after data is fetched ,moved from bottom cuz it gets executed as soon as we get location
         }

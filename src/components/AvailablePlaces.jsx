@@ -4,6 +4,7 @@ import Places from './Places.jsx';
 const places = localStorage.getItem('places');
 export default function AvailablePlaces({ onSelectPlace }) {
 
+const [isLoading, setIsLoading] = useState(true); //? to show loading text
 const [availablePlaces, setAvailablePlaces] = useState([]); ///initial empty array cuz fetch takes time to load
 
   // fetch('http://localhost:3000/places').then((response) => {  //!it creates infinite loop as state updating retriggers a rerender
@@ -24,9 +25,11 @@ const [availablePlaces, setAvailablePlaces] = useState([]); ///initial empty arr
 
   useEffect(() => {
     async function fetchPlaces() {
+      setIsLoading(true); //! set loading to true before fetching data
       const response = await fetch('http://localhost:3000/places');
       const resData = await response.json();
       setAvailablePlaces(resData.places);
+      setIsLoading(false); //! set loading to false after data is fetched
     }
 
     fetchPlaces(); //? call the function to fetch data
@@ -36,6 +39,8 @@ const [availablePlaces, setAvailablePlaces] = useState([]); ///initial empty arr
     <Places
       title="Available Places"
       places={availablePlaces}
+      isLoading={isLoading}
+      loadingText="Fetching place data..."
       fallbackText="No places available."
       onSelectPlace={onSelectPlace}
     />

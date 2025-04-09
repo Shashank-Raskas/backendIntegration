@@ -4,7 +4,7 @@ import ErrorPage from './Error.jsx';
 import { sortPlacesByDistance } from '../loc.js';
 import { fetchAvailablePlaces } from '../http.js';
 
-const places = localStorage.getItem('places');
+// const places = localStorage.getItem('places');
 export default function AvailablePlaces({ onSelectPlace }) {
 
 const [isLoading, setIsLoading] = useState(true); //? to show loading text

@@ -3,3 +3,4 @@
 2.How to make sure the http request is not entered into infinite loop by using useEffect()
 3.Fetching data from backend using routing in REST Api
 4.Using Async/Await on the functions etc etc..
+5.using custom hooks and also using it in multiple components
